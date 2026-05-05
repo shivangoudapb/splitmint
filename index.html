@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SplitMint</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="auth-view" class="auth-shell">
+      <section class="brand-panel">
+        <div class="brand-mark" aria-hidden="true">
+          <span>S</span>
+        </div>
+        <h1>SplitMint</h1>
+        <p>Your gateway to Karbon group expenses.</p>
+        <div class="brand-stats">
+          <div>
+            <strong>3</strong>
+            <span>friends per group</span>
+          </div>
+          <div>
+            <strong>3</strong>
+            <span>split modes</span>
+          </div>
+          <div>
+            <strong>AI</strong>
+            <span>MintSense parser</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="auth-panel" aria-labelledby="auth-title">
+        <div class="tabs" role="tablist" aria-label="Authentication">
+          <button class="tab active" id="login-tab" type="button">Login</button>
+          <button class="tab" id="register-tab" type="button">Register</button>
+        </div>
+
+        <form id="login-form" class="auth-form">
+          <h2 id="auth-title">Welcome back</h2>
+          <label>Email<input id="login-email" type="email" required autocomplete="email" /></label>
+          <label>Password<input id="login-password" type="password" required autocomplete="current-password" /></label>
+          <button class="primary-btn" type="submit">Login</button>
+          <p id="login-error" class="form-error" role="alert"></p>
+        </form>
+
+        <form id="register-form" class="auth-form hidden">
+          <h2>Create account</h2>
+          <label>Name<input id="register-name" type="text" required autocomplete="name" /></label>
+          <label>Email<input id="register-email" type="email" required autocomplete="email" /></label>
+          <label>Password<input id="register-password" type="password" required minlength="4" autocomplete="new-password" /></label>
+          <button class="primary-btn" type="submit">Register</button>
+          <p id="register-error" class="form-error" role="alert"></p>
+        </form>
+      </section>
+    </main>
+
+    <main id="app-view" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-mark small" aria-hidden="true"><span>S</span></div>
+          <div>
+            <strong>SplitMint</strong>
+            <span id="current-user"></span>
+          </div>
+        </div>
+        <button id="new-group-btn" class="primary-btn full" type="button">New group</button>
+        <nav id="group-list" class="group-list" aria-label="Groups"></nav>
+        <button id="logout-btn" class="ghost-btn full" type="button">Logout</button>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div>
+            <h1 id="group-title">Dashboard</h1>
+            <p id="group-subtitle">Track expenses, balances, settlements, and summaries.</p>
+          </div>
+          <div class="topbar-actions">
+            <button id="edit-group-btn" class="secondary-btn" type="button">Edit group</button>
+            <button id="delete-group-btn" class="danger-btn" type="button">Delete</button>
+          </div>
+        </header>
+
+        <section class="summary-grid" aria-label="Group summary">
+          <article class="summary-card">
+            <span>Total spent</span>
+            <strong id="total-spent">$0.00</strong>
+          </article>
+          <article class="summary-card">
+            <span>You owe</span>
+            <strong id="you-owe">$0.00</strong>
+          </article>
+          <article class="summary-card">
+            <span>Owed to you</span>
+            <strong id="owed-to-you">$0.00</strong>
+          </article>
+          <article class="summary-card">
+            <span>Expenses</span>
+            <strong id="expense-count">0</strong>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>Add expense</h2>
+              <button id="clear-expense-form" class="ghost-btn" type="button">Clear</button>
+            </div>
+            <form id="expense-form" class="expense-form">
+              <input id="expense-id" type="hidden" />
+              <label>Description<input id="expense-description" type="text" required placeholder="Dinner, cab, tickets" /></label>
+              <div class="form-row">
+                <label>Amount<input id="expense-amount" type="number" min="0.01" step="0.01" required /></label>
+                <label>Date<input id="expense-date" type="date" required /></label>
+              </div>
+              <div class="form-row">
+                <label>Payer<select id="expense-payer" required></select></label>
+                <label>Split mode<select id="split-mode">
+                  <option value="equal">Equal</option>
+                  <option value="custom">Custom amount</option>
+                  <option value="percentage">Percentage</option>
+                </select></label>
+              </div>
+              <div id="split-participants" class="split-list"></div>
+              <button class="primary-btn" type="submit">Save expense</button>
+              <p id="expense-error" class="form-error" role="alert"></p>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>MintSense</h2>
+              <button id="parse-mintsense" class="secondary-btn" type="button">Parse</button>
+            </div>
+            <textarea id="mintsense-input" rows="4" placeholder="Example: Riya paid 1200 for pizza yesterday split equally with Aman and Dev"></textarea>
+            <div id="mintsense-output" class="mintsense-output"></div>
+          </section>
+        </section>
+
+        <section class="workspace-grid">
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>Balances</h2>
+            </div>
+            <div id="balance-table" class="balance-table"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>Settlements</h2>
+            </div>
+            <div id="settlements" class="settlements"></div>
+          </section>
+        </section>
+
+        <section class="workspace-grid">
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>Contributions</h2>
+            </div>
+            <div id="contribution-chart" class="chart"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>Shares</h2>
+            </div>
+            <div id="share-chart" class="chart"></div>
+          </section>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>Transaction history</h2>
+          </div>
+          <div class="filters">
+            <input id="search-filter" type="search" placeholder="Search expenses" />
+            <select id="participant-filter"><option value="">All participants</option></select>
+            <input id="date-from-filter" type="date" />
+            <input id="date-to-filter" type="date" />
+            <input id="amount-min-filter" type="number" min="0" step="0.01" placeholder="Min amount" />
+            <input id="amount-max-filter" type="number" min="0" step="0.01" placeholder="Max amount" />
+          </div>
+          <div id="expense-history" class="expense-history"></div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="group-dialog">
+      <form id="group-form" method="dialog" class="dialog-form">
+        <h2 id="group-dialog-title">New group</h2>
+        <input id="group-id" type="hidden" />
+        <label>Group name<input id="group-name" type="text" required /></label>
+        <div id="participant-editor" class="participant-editor"></div>
+        <button id="add-participant-btn" class="secondary-btn" type="button">Add participant</button>
+        <p id="group-error" class="form-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="ghost-btn" value="cancel" type="button" id="cancel-group-dialog">Cancel</button>
+          <button class="primary-btn" value="default" type="submit">Save group</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
