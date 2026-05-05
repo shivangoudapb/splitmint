@@ -8,9 +8,3 @@ services:
     envVars:
       - key: TOKEN_SECRET
         generateValue: true
-      - key: DATA_FILE
-        value: /var/data/splitmint.json
-    disk:
-      name: splitmint-data
-      mountPath: /var/data
-      sizeGB: 1
